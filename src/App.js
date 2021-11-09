@@ -1,0 +1,57 @@
+import React, { useCallback, useState, useRef } from 'react';
+import './App.css';
+import TodoInsert from './components/TodoInsert';
+import TodoList from './components/TodoList';
+import TodoTemplate from './components/TodoTemplate';
+
+function App() {
+  const [todos, setTodos] = useState([
+    {
+      id: 1,
+      text: '운동하기',
+      checked: true,
+    },
+    {
+      id: 2,
+      text: '요리하기',
+      checked: true,
+    },
+    {
+      id: 3,
+      text: '학원가기',
+      checked: false,
+    }
+  ]);
+
+  const nextId = useRef(4);
+
+  // todo 즉, 목록을 추가하는 함수 insert에 함수 전달
+  const onInsert = useCallback ( value => {
+    const todo = {
+      id : nextId.current,
+      text : value,
+      checked : false,
+    };
+    setTodos(todos.concat(todo));
+    nextId.current += 1;
+  }, [todos]);
+
+  const onRemove = useCallback ( id => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  }, [todos]);
+
+  const onToggle = useCallback ( id => {
+    setTodos(todos.map(todo => todo.id === id ? {...todo, checked: !todo.checked} : todo)); 
+    // 기존 todo의 checked를 true면 false로 false면 true로
+  }, [todos]);
+
+  return (
+    <TodoTemplate>
+      <TodoInsert onInsert={onInsert} />
+      <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle} />
+      <div>Todo App을 만듭니다.</div>
+    </TodoTemplate>
+  );
+}
+
+export default App;
